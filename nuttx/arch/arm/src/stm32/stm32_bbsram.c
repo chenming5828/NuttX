@@ -807,7 +807,7 @@ int stm32_bbsram_savepanic(int fileno, uint8_t *context, int length)
 {
   FAR struct bbsramfh_s *bbf;
   int fill;
-  int ret = -ENOMEM;
+  int ret = -ENOSPC;
 
   /* on a bad day we could panic while panicking, (and we debug assert)
    * this is a potential feeble attempt at only writing the first
@@ -826,41 +826,46 @@ int stm32_bbsram_savepanic(int fileno, uint8_t *context, int length)
 
       DEBUGASSERT(bbf);
 
-      /* As once ensures we will keep the first dump checking the time for
+      /* If the g_bbsram has been nulled out we return ENXIO.
+       *
+       * As once ensures we will keep the first dump. Checking the time for
        * 0 protects from over writing a previous crash dump that has not
        * been saved to long term storage and erased.  The dreaded reboot
        * loop.
        */
 
-      if (bbf && (bbf->lastwrite.tv_sec == 0 && bbf->lastwrite.tv_nsec == 0))
-        {
-          /* Clamp length if too big  */
+      if (!bbf) {
+        ret = -ENXIO;
+      }
+      else if ((bbf->lastwrite.tv_sec == 0 && bbf->lastwrite.tv_nsec == 0))
+      {
+        /* Clamp length if too big  */
 
-          if (length > bbf->len)
-            {
-              length = bbf->len;
-            }
+        if (length > bbf->len)
+          {
+            length = bbf->len;
+          }
 
-          stm32_bbsram_unlock();
+        stm32_bbsram_unlock();
 
-          stm32_bbsram_internal_write(bbf, (char *) context, 0, length);
+        stm32_bbsram_internal_write(bbf, (char *) context, 0, length);
 
-          /* Fill with 0 if data is less then file size */
+        /* Fill with 0 if data is less then file size */
 
-          fill = (int) bbf->len - length;
+        fill = (int) bbf->len - length;
 
-          if (fill > 0)
-            {
-              memset(&bbf->data[length], 0, fill);
-            }
+        if (fill > 0)
+          {
+            memset(&bbf->data[length], 0, fill);
+          }
 
-          /* Seal the file */
+        /* Seal the file */
 
-          stm32_bbsram_internal_close(bbf);
+        stm32_bbsram_internal_close(bbf);
 
-          stm32_bbsram_lock();
-          ret = length;
-        }
+        stm32_bbsram_lock();
+        ret = length;
+      }
     }
 
   return ret;
