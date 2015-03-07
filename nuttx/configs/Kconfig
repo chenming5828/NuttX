@@ -594,6 +594,13 @@ config ARCH_BOARD_PIRELLI_DPL10
 		This directory contains the board support for Pirelli dpl10 phones.  The
 		additions were made by Craig Comstock (with help form Alan Carvalho de Assis).
 
+config ARCH_BOARD_PX4ESC_V1
+	bool "PX4ESC v1"
+	depends on ARCH_CHIP_STM32F103CB
+	---help---
+		This is a minimal configuration that supports low-level test of the
+		PX4ESC v1 in the NuttX source tree.On a Spark or Maple dev bopard
+
 config ARCH_BOARD_NUCLEO_F401RE
 	bool "STM32F401 Nucleo F401RE"
 	depends on ARCH_CHIP_STM32F401RE
@@ -1156,6 +1163,7 @@ config ARCH_BOARD
 	default "pic32mx7mmb"              if ARCH_BOARD_PIC32MX7MMB
 	default "pic32mz-starterkit"       if ARCH_BOARD_PIC32MZ_STARTERKIT
 	default "pirelli_dpl10"            if ARCH_BOARD_PIRELLI_DPL10
+	default "px4esc-v1"		   if ARCH_BOARD_PX4ESC_V1
 	default "nucleo-f4x1re"            if ARCH_BOARD_NUCLEO_F401RE || ARCH_BOARD_NUCLEO_F411RE
 	default "qemu-i486"                if ARCH_BOARD_QEMU_I486
 	default "rgmp"                     if ARCH_BOARD_RGMP
@@ -1551,4 +1559,7 @@ source "configs/zkit-arm-1769/Kconfig"
 endif
 if ARCH_BOARD_SIM
 source "configs/sim/Kconfig"
+endif
+if ARCH_BOARD_PX4ESC_V1
+source "configs/px4esc-v1/Kconfig"
 endif
