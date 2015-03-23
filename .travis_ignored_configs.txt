@@ -146,7 +146,6 @@ nuttx/configs/sam4e-ek/nxwm/defconfig
 nuttx/configs/sam3u-ek/nxwm/defconfig
 nuttx/configs/sam3u-ek/knsh/defconfig
 nuttx/configs/pic32mx7mmb/nsh/defconfig
-nuttx/configs/pic32mz-starterkit/nsh/defconfig
 nuttx/configs/pic32mx-starterkit/nsh2/defconfig
 nuttx/configs/pic32mx-starterkit/nsh/defconfig
 nuttx/configs/pcduino-a10/nsh/defconfig
